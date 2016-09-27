@@ -184,6 +184,7 @@ public class jPCQuery {
 	   else {
 	     Log.DEBUG("jPCQuery.run:doing daily at time:",_dailyTime);
 	     while (true) {
+	       Log.out("jPCQuery: scheduled for daily query at hour:",_dailyTime);
 	       if (!DateUtil.getTodaysDate().equals(lastDate) && DateUtil.getCurrentHour()==_dailyTime) {
                  performQueriesAccrossDateRange();
 		 lastDate= DateUtil.getTodaysDate();
