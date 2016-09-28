@@ -24,7 +24,7 @@ public class Log {
 
 
   public static void out(String msg, Object obj) {
-    if (VERBOSE) System.out.println(combine("Log",msg,obj));
+    if (VERBOSE) System.out.println(DateUtil.getDate()+combine("Log",msg,obj));
   }
   public static void out(String msg) {out(msg,null);}
 

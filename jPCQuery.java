@@ -93,7 +93,7 @@ public class jPCQuery {
         public static void main(String[] args) {
 	   try {
 	      jPCQuery jpcq= new jPCQuery(args);
-	      Log.DEBUG("jPCQuery ver 0.096");
+	      Log.DEBUG("jPCQuery ver 1.0");
 	      /*
 	      class myDHLOP implements DcmHeaderListOperator {
 	        public void run(DcmHeaderList dhl) { System.out.println(dhl);}
@@ -175,22 +175,29 @@ public class jPCQuery {
 	     }
 	 }
 
-	/** perform queries based on previously set arguments */
+	/** wrapper to run(String) */
+	public void run() {run(null);}
+
+	/** Central engine of this class - perform queries based on previously set arguments */
 	public void run(String arg) {
 	  String lastDate="00000000";
 	   if (!_daily) {
-               performQueriesAccrossDateRange();
+	       Log.out("jPCQuery Starting Query Crawl");
+               int recordCount= performQueriesAccrossDateRange();
+	       Log.out("jPCQuery Done. RecordsFound=",recordCount);
 	   }
 	   else {
 	     Log.DEBUG("jPCQuery.run:doing daily at time:",_dailyTime);
 	     while (true) {
-	       Log.out("jPCQuery: scheduled for daily query at hour:",_dailyTime);
 	       if (!DateUtil.getTodaysDate().equals(lastDate) && DateUtil.getCurrentHour()==_dailyTime) {
-                 performQueriesAccrossDateRange();
+	         Log.out("jPCQuery: starting daily update...", DateUtil.getDate());
+                 int recordCount= performQueriesAccrossDateRange();
+	         Log.out("jPCQuery Done. RecordsFound=",recordCount);
+		 Log.out("jPCQuery: next update scheduled for: "+DateUtil.getDate("today+1")+"@"+_dailyTime);
 		 lastDate= DateUtil.getTodaysDate();
 	       }
 	       try {
-	           Thread.sleep(3000); // pole for repeat hour every few minutes
+	           Thread.sleep(60000); // pole for repeat hour every few minutes
 	       }
 	       catch(Exception e) {
 	           Log.error("jPCQuery.run",e);
@@ -212,9 +219,12 @@ public class jPCQuery {
 	*  -k StudyDate=20130101 -k StudyTime=000000-005959 
 	*  -k SeriesDate=20130101 -k SeriesTime=000000-005959 
 	*  -k Modality=CT
+	*
+	*  returns number or records found
 	*/
-	private void performSingleQuery(String date, String modality) {
+	private int performSingleQuery(String date, String modality) {
 	     // create query
+	     int recordCount=0;
 	     ArrayList<String> argList= new ArrayList<String>();
 	     for (String arg : FINDSCU_BASE) argList.add(arg);
 	     argList.add("-aec");for (String arg : _aec.split(" ")) argList.add(arg);
@@ -235,17 +245,26 @@ public class jPCQuery {
   	         DcmtkParser dparser= new DcmtkParser(queryOutput);
 		 if (_outputCSV) dparser.saveCSV(_outputCSVFileName);
   	         DcmHeaderList dhList= dparser.getDcmHeaders();
+		 recordCount+= dhList.size();
   	         queryOutput.delete();
   	         if (_dhlOp!=null) _dhlOp.run(dhList);
 		 if (_xjsonDB) sendResults(dhList);
                }
 	     }
+	     return recordCount;
 	}
 
 
-	private void performQueriesAccrossDateRange() {
+	/** Performs Query across date range by dividing up into daily and modality-based
+	*   short queries.  Motivation: most PAC's have a limit of query responses 
+	*   and by dividing into day based queries, one can stay below this limit.
+	*
+	*   returns total number of records found.
+	*/
+	private int performQueriesAccrossDateRange() {
              // iterate over all chosen modalities
 	     // important calculate DateRange at every query as query may be repeated over many days
+	     int recordCount=0;
 	     String startDate=DateUtil.getDate(_startDate);  
 	     String endDate= DateUtil.getDate(_endDate);
              int startYear= Integer.parseInt(startDate.substring(0,4));
@@ -266,11 +285,12 @@ public class jPCQuery {
                      String date= String.format("%04d",year)
                        +String.format("%02d",month)
                        +String.format("%02d",day);
-		     performSingleQuery(date,modality);
+		     recordCount+= performSingleQuery(date,modality);
                    }
                  }
                }
              }
+	     return recordCount;
 	}
 	     
 
