@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package usb.jpacscrawler;
 
 /** Simple Date Utilities to use in jPC 
 * 

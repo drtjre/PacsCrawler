@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package usb.jpacscrawler;
 
 
 class ShowResults implements DcmHeaderListOperator {
