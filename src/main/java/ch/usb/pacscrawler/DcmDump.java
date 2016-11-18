@@ -1,4 +1,4 @@
-package ch.usb.jpacscrawler;
+package ch.usb.pacscrawler;
 
 /** DcmDump
 *   wrapper for dcmdump of dcmtk
@@ -10,7 +10,6 @@ package ch.usb.jpacscrawler;
 
 import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
 
 public class DcmDump {
 
@@ -24,9 +23,6 @@ public class DcmDump {
       ArrayList<String> alist= new ArrayList<String>();
       alist.add(DCMDUMP);
       alist.add(dcmFile.getPath().toString());
-
-      // TODO : WHY NULL POINTER EX
-
       File out= JavaSystemCaller.call(alist);
       DcmtkParser dp= new DcmtkParser();
       dp.parse(out);

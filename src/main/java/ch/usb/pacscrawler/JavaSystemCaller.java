@@ -1,4 +1,4 @@
-package ch.usb.jpacscrawler;
+package ch.usb.pacscrawler;
 
 /** Utilities for system calls
 * @author TJRE
@@ -7,7 +7,6 @@ package ch.usb.jpacscrawler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -15,8 +14,7 @@ import java.io.PrintWriter;
 import java.io.IOException; 
 import java.nio.charset.StandardCharsets; 
 import java.nio.file.Files; 
-import java.nio.file.Paths; 
-import java.util.List; 
+import java.nio.file.Paths;
 
 
 public class JavaSystemCaller {

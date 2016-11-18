@@ -21,7 +21,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ch.usb.jpacscrawler.jPCQuery</mainClass>
+                            <mainClass>ch.usb.pacscrawler.jPCQuery</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,4 +1,4 @@
-package ch.usb.jpacscrawler;
+package ch.usb.pacscrawler;
 /** PACSsocket.java
 *   Encapsulates connection to PACS.
 *   Perform queries and PULLS on PACS
@@ -8,20 +8,9 @@ package ch.usb.jpacscrawler;
 *   @date Nov2016
 */
 
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.BufferedWriter;
 import java.util.List;
 import java.util.ArrayList;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class PACSsocket {

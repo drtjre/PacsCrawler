@@ -1,4 +1,4 @@
-package ch.usb.jpacscrawler;
+package ch.usb.pacscrawler;
 
 /** jPCdbc - jPACScrawler DataBase Connectivity
 * 

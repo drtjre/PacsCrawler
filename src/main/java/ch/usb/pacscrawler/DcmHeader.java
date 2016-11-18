@@ -1,4 +1,4 @@
-package ch.usb.jpacscrawler;
+package ch.usb.pacscrawler;
 
 /** DcmHeader 
 *   Simple Hashtable based data structure

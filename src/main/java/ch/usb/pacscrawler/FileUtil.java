@@ -1,4 +1,4 @@
-package ch.usb.jpacscrawler;
+package ch.usb.pacscrawler;
 /** FileUtil 
 *   Functions to create and delete temporary directory.
 *
@@ -8,7 +8,6 @@ package ch.usb.jpacscrawler;
 
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
