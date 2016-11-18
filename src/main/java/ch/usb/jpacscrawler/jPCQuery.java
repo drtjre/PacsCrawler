@@ -1,4 +1,4 @@
-package usb.jpacscrawler;
+package ch.usb.jpacscrawler;
 
 /** jPCQuery 
 *   PACScrawler Query Object Core
@@ -254,10 +254,8 @@ public class jPCQuery {
                    startDayTmp= ((year==startYear)&&(month==startMonth)?startDay:1);
                    endDayTmp= ((year==endYear)&&(month==endMonth)?endDay:31);
                    for (int day=startDayTmp;day<=endDayTmp;day++) {
-                     String date= String.format("%04d",year)
-                       +String.format("%02d",month)
-                       +String.format("%02d",day);
-		     performSingleQuery(date,modality);
+                     String date = String.format("%04d",year) + String.format("%02d",month) + String.format("%02d",day);
+		             performSingleQuery(date, modality);
                    }
                  }
                }

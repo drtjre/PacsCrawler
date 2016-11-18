@@ -1,4 +1,4 @@
-package usb.jpacscrawler;
+package ch.usb.jpacscrawler;
 
 /** Utilities for system calls
 * @author TJRE
