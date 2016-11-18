@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 /** Utilities for system calls
 * @author TJRE
@@ -10,7 +10,6 @@ import java.util.List;
 import java.io.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.PrintWriter;
 
 import java.io.IOException; 

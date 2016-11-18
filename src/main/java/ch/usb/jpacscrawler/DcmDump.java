@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 /** DcmDump
 *   wrapper for dcmdump of dcmtk

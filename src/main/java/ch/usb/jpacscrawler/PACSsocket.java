@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 /** PACSsocket.java
 *   Encapsulates connection to PACS.
 *   Perform queries and PULLS on PACS

@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 /** DcmHeader 
 *   Simple Hashtable based data structure
@@ -10,8 +10,6 @@ package jPacsCrawler;
 */
 
 import java.util.Hashtable;
-import java.util.List;
-import java.io.UnsupportedEncodingException;
 
 public class DcmHeader {
 

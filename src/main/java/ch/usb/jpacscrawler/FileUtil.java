@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 /** FileUtil 
 *   Functions to create and delete temporary directory.
 *
@@ -6,6 +6,8 @@ package jPacsCrawler;
 *  @date   nov2016
 */
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +73,7 @@ public class FileUtil {
   public void appendFile(String filename, String data) {
     try {
       File outFile= new File(filename);
-      OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outFileName, true), "UTF-8") ;
+      OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outFile, true), "UTF-8") ;
       writer.write(data+"\n");
       writer.close();
     }

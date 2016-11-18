@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 
 /** 
@@ -8,8 +8,6 @@ package jPacsCrawler;
  *
  */
 import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
 
 public class DcmtkParser {
   private static final String DATA_TAG="# Dicom-Data-Set"; // valid dataset blocks must start with this

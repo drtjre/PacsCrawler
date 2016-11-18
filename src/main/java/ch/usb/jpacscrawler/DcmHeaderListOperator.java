@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 
 /** Interface for DcmHeaderList plugins 

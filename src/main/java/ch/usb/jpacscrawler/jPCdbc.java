@@ -1,12 +1,10 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 /** jPCdbc - jPACScrawler DataBase Connectivity
 * 
 * @author TJRE
 * @date   Sep2016
 */
-
-import java.io.*;
 
 public class jPCdbc {
 

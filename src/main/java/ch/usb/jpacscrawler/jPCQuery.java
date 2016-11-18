@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 /** jPCQuery 
 *   PACScrawler Query Object Core
@@ -17,16 +17,7 @@ package jPacsCrawler;
  *        write user cases
  */
 
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.BufferedWriter;
 import java.util.List;
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package jPacsCrawler;
+package ch.usb.jpacscrawler;
 
 
 /** Container class for DcmHeader 
@@ -7,11 +7,14 @@ package jPacsCrawler;
 *  @date   Sep2016
 */
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
-import java.io.*;
+
+
 
 public class DcmHeaderList extends ArrayList<DcmHeader> {
 
