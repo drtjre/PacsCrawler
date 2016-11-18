@@ -13,6 +13,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
 
+import java.io.IOException; 
+import java.nio.charset.StandardCharsets; 
+import java.nio.file.Files; 
+import java.nio.file.Paths; 
+import java.util.List; 
+
 
 public class JavaSystemCaller {
     private static final boolean DEBUG= false;
@@ -23,9 +29,29 @@ public class JavaSystemCaller {
       return call(cmd.split(" "));
     }
 
+    /** returns contents of a file */
+    public static String cat(File file) {
+      return sys("cat "+file.getPath());
+    }
+
+    /** do system level call and return string of output */
+    public static String sys(String cmd) {
+      String output="NULL";
+      try {
+        File file= call(cmd);
+        List<String> lines = Files.readAllLines(Paths.get(file.getPath()), StandardCharsets.UTF_8); 
+        StringBuilder sb = new StringBuilder(1024); 
+        for (String line : lines) { sb.append(line+"\n"); } 
+        output = sb.toString();
+      }
+      catch (IOException e) {output=e.toString();}
+      return output;
+    }
+
     public  static File call(List<String> slist) {
       File file= null;
       try {
+        Log.DEBUG("JavaSystemCall.call:",slist);
         ProcessBuilder pb = new ProcessBuilder(slist);
 	File output = File.createTempFile("jsyscall",".jsys");
 	StringBuffer buf= new StringBuffer();
@@ -117,28 +143,21 @@ public class JavaSystemCaller {
     }
 
     public static void main(String[] args) throws Exception {
-             ArrayList<String> alist= new ArrayList<String>();
-             alist.add("/Users/pacs/dcmtk/dcmtk-3.6.0-mac-i686-dynamic/bin//findscu");
-             alist.add("-to");
-             alist.add("6000");
-             alist.add("-v"); alist.add("-S");alist.add("-k");alist.add("0008,0052=SERIES");
-             alist.add("-aec");
-             alist.add("AE_ARCH2_4PR");
-             alist.add("10.5.66.74");
-	     alist.add("104");
-             alist.add("-aet");
-             alist.add("YETI");
-	     alist.add("-k");
-	     alist.add("AccessionNumber");
-	     alist.add("-k");
-	     alist.add("StudyDescription");
-	     alist.add("-k");
-	     alist.add("StudyDate=20101013");
-	     alist.add("-k");
-	     alist.add("StudyDescription=CT Thorax*");
-	     // findscu -to 6000 -v -S -k 0008,0052=SERIES -aec AE_ARCH2_4PR 10.5.66.74 104 -aet YETI -k StudyDate -k StudyTime -k AccessionNumber -k InstanceAvailability -k Modality -k ReferringPhysicianName -k StudyDescription -k SeriesDescription -k PatientName -k PatientID -k PatientBirthDate -k PatientSex -k BodyPartExamined -k StudyID -k SeriesNumber -k InstanceNumber -k Rows -k Columns -k InstitutionName -k StudyInstanceUID -k SeriesInstanceUID -k StudyDate=20130513 -k SeriesDate=20130513 -k Modality=MR
+      File out;
 
-            JavaSystemCaller.call(alist); 
+      Log.DEBUG("cat");
+      System.out.println(JavaSystemCaller.cat(new File(args[0])));
+
+      Log.DEBUG("simple Command");
+      System.out.println(JavaSystemCaller.sys(args[0]));
+
+           /* 
+             ArrayList<String> alist= new ArrayList<String>();
+	     for (String s : args) alist.add(s);
+
+            out= JavaSystemCaller.call(alist); 
+	    Log.DEBUG(out.getPath().toString());
+	    */
     }
 
 

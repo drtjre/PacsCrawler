@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class DcmtkParser {
-  private static final String DATA_TAG="W: # Dicom-Data-Set";
+  private static final String DATA_TAG="# Dicom-Data-Set"; // valid dataset blocks must start with this
+  private static final String EXCLUSION_PREFIX="I:"; // valid dataset block delimiter must NOT contain this.
   private static final int MIN_DATA_LINE_LENGTH= 20;
   private static final String DL= ";";  // delimiter
   private static final String LF= "\\n";  // delimiter
@@ -22,6 +23,9 @@ public class DcmtkParser {
 
   public static String getVer() {return "ver 8859-1";}
 
+  /** Parse dcmtk output file 
+  *  @args infileName full path to file containing dcmtk output 
+  */
   public DcmtkParser(String infileName) {
     this(new File(infileName));
   } 
@@ -34,30 +38,52 @@ public class DcmtkParser {
   /** parse file and store records internally until requested 
   *   @arg infileName full path of file to parse
   */
+  public DcmtkParser() {
+  }
+
+  /** parse file and store records internally until requested 
+  *   @arg infileName full path of file to parse
+  */
   public DcmtkParser(File infile) {
+    parse(infile);
+  }
+
+  public void parse(File infile) {
     _dhList= new DcmHeaderList();
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(infile), "ISO-8859-1"));
       String line;
       DcmHeader dcmHeader= new DcmHeader();
 
-      while ((line = br.readLine()) != null) {
-        // process the line.
-        if (line.startsWith(DATA_TAG)) {
-          // new record
-          dcmHeader= new DcmHeader(); 
-          while ((line = br.readLine())!= null && line.length()>MIN_DATA_LINE_LENGTH) {
-            dcmHeader.put(getTag(line),getValue(line));
-          }
-          if (dcmHeader.isComplete()) {
+      while (true) {
+        line = br.readLine();
+	if (line==null) {  // EOF, close off last dataset
+          if (dcmHeader!=null && dcmHeader.isComplete()) {
 	    _dhList.add(dcmHeader);
           }
-        }
+	  break;
+	}
+        if (isNewDataSetInitiator(line)) { // NEW RECORD, close off existing, start a new
+          if (dcmHeader!=null && dcmHeader.isComplete()) {
+	    _dhList.add(dcmHeader);
+          }
+	  dcmHeader= new DcmHeader();
+	}
+	if (dcmHeader!=null) {
+	  // try to add line to current header if one is already started
+          dcmHeader.put(getTag(line),getValue(line));
+	}
       }
     }
     catch (IOException e)  {
       Log.error("DcmtkParser.ctor",e);
     }
+  }
+
+
+  /** Determine if line of file to parse represents a new dataset */
+  private static boolean isNewDataSetInitiator(String line) {
+        return (line.contains(DATA_TAG) && !line.startsWith(EXCLUSION_PREFIX));
   }
 
 
@@ -101,7 +127,8 @@ public class DcmtkParser {
   /** Test only */
   public static void main(String[] args) {
     try {
-      DcmtkParser dp= new DcmtkParser(args[0]);
+      DcmtkParser dp= new DcmtkParser();
+      dp.parse(new File(args[0]));
       System.out.println(dp.toCSV());
       dp.saveCSV(args[1]);
     }

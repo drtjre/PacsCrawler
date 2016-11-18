@@ -10,6 +10,8 @@ package jPacsCrawler;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
+import java.io.IOException;
+import java.io.*;
 
 public class DcmHeaderList extends ArrayList<DcmHeader> {
 
@@ -21,6 +23,27 @@ public class DcmHeaderList extends ArrayList<DcmHeader> {
       buffy.append(dh.toCSV()+"\n");
     }
     return buffy.toString();
+  }
+
+  /** append contents to a CSV file */
+  public void saveCSV(File csvFile) {
+    try {
+      boolean addHeader= false;
+      if (!csvFile.exists()) addHeader= true;
+      OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(csvFile.getPath(), true), "UTF-8") ;
+      if (addHeader) writer.write(DcmHeader.getDescKeysCsv()+"\n");
+      writer.write(toCSV());
+      writer.close();
+    }
+    catch (IOException e) {
+      Log.error("DcmHeaderLIst.saveCSV",e);
+    }
+  }
+
+  /** append existing list to this list */
+  public void add(DcmHeaderList dlist) {
+    for (DcmHeader dcm : dlist) 
+      this.add(dcm);
   }
 
   /** Convert contents of List to JSON format.
@@ -36,6 +59,8 @@ public class DcmHeaderList extends ArrayList<DcmHeader> {
     buffy.append("]");
     return buffy.toString();
   }
+
+  public String toString() {return toCSV();}
 
   /** Testing only */
   public static void main(String[] args) {

@@ -37,7 +37,7 @@ public class jPCQuery {
 	 private static final String[] FINDSCU_BASE= {"findscu","-to","6000","-v","-S","-k","0008,0052=SERIES"};
          String _aec;
          String _aet;
-         boolean _deepCrawl;
+         boolean _DEEP;
          boolean _xjsonDB;
          String _jsonDBURL;
          boolean _outputCSV;
@@ -50,18 +50,20 @@ public class jPCQuery {
          List<String> _selectTagList; // "select" clause field names
          List<String> _whereTagList; // "where" clause expressions
 
-	 DcmHeaderListOperator _dhlOp;
+	 DcmHeaderListOperator _plugin;  // generic plugin to perform on each header found
 
-	 public void setDcmHeaderListOperator(DcmHeaderListOperator dhlo) {
-	   _dhlOp= dhlo;
+	 /** Set a plugin to call on each header item found */
+	 public void setPlugin(DcmHeaderListOperator plugin) {
+	   _plugin= plugin;
 	 }
+
 
 	 /** dump contents - used for testing */
          public String toString() {
 	   StringBuffer buf= new StringBuffer("jPCQuer::");
            buf.append("\n  _aec="+String.valueOf(_aec));
            buf.append("\n  _aet="+String.valueOf(_aet));
-           buf.append("\n  _deepCrawl="+String.valueOf(_deepCrawl));
+           buf.append("\n  _DEEP="+String.valueOf(_DEEP));
            buf.append("\n  _xjsonDB="+String.valueOf(_xjsonDB));
            buf.append("\n  _jsonDBURL="+String.valueOf(_jsonDBURL));
            buf.append("\n  _outputCSV="+String.valueOf(_outputCSV));
@@ -94,12 +96,6 @@ public class jPCQuery {
 	   try {
 	      jPCQuery jpcq= new jPCQuery(args);
 	      Log.DEBUG("jPCQuery ver 1.0");
-	      /*
-	      class myDHLOP implements DcmHeaderListOperator {
-	        public void run(DcmHeaderList dhl) { System.out.println(dhl);}
-	      }
-	      jpcq.setDcmHeaderListOperator(new myDHLOP());
-	      */
 	      jpcq.run(null);
 	   }
 	   catch (Exception e) {
@@ -163,7 +159,7 @@ public class jPCQuery {
 		   case "-mod" :   _modalityList.add(args[++i]);break;
 		   case "-sel" : _selectTagList.add(args[++i]);break;
 		   case "-w" :  _whereTagList.add(args[++i]);break;
-		   case "-d" :  _deepCrawl= true;break;
+		   case "-DEEP" :  _DEEP= true;break;
 		   case "-v" :  _verbose= true; break;
 		   case "-DEBUG" :  DEBUG= true; break;
 		   case "-daily" :  _daily=true; _dailyTime= Integer.parseInt(args[++i]);break;
@@ -222,35 +218,25 @@ public class jPCQuery {
 	*
 	*  returns number or records found
 	*/
-	private int performSingleQuery(String date, String modality) {
-	     // create query
+	protected int performSingleQuery(String date, String modality) {             
 	     int recordCount=0;
-	     ArrayList<String> argList= new ArrayList<String>();
-	     for (String arg : FINDSCU_BASE) argList.add(arg);
-	     argList.add("-aec");for (String arg : _aec.split(" ")) argList.add(arg);
-	     argList.add("-aet");for (String arg : _aet.split(" ")) argList.add(arg);
-	     for (String s : _selectTagList) if (s!=null && s.length()>0) {argList.add("-k");argList.add(s);}
-	     for (String s : _whereTagList) if (s!=null && s.length()>0) {argList.add("-k");argList.add(s);}
+             DcmHeaderList qresults; 
 
-	     argList.add("-k");argList.add("StudyDate="+date);
-	     argList.add("-k");argList.add("SeriesDate="+date);
-	     argList.add("-k");argList.add("Modality="+modality);
+             // Setup PACS connection
+             PACSsocket pacs= new PACSsocket(_aec,_aet);
 
-	     if (SHOW_ONLY || DEBUG) {for (String s : argList) System.out.print(s+" ");System.out.println();}
+	     // create query
+	     if (!_DEEP) 
+	       qresults= pacs.query(date,modality);
+	     else 
+	       qresults= pacs.deepQuery(date,modality);
 
-	     if (!SHOW_ONLY) {
-	       File queryOutput= JavaSystemCaller.call(argList);
-	       //Log.DEBUG("jPCQuery.performSingleQuery queryOutput=",queryOutput);
-               if (queryOutput!=null) {
-  	         DcmtkParser dparser= new DcmtkParser(queryOutput);
-		 if (_outputCSV) dparser.saveCSV(_outputCSVFileName);
-  	         DcmHeaderList dhList= dparser.getDcmHeaders();
-		 recordCount+= dhList.size();
-  	         queryOutput.delete();
-  	         if (_dhlOp!=null) _dhlOp.run(dhList);
-		 if (_xjsonDB) sendResults(dhList);
-               }
-	     }
+             if (qresults!=null) {
+		 recordCount+= qresults.size();
+		 if (_outputCSV) qresults.saveCSV(new File(_outputCSVFileName));
+		 if (_xjsonDB) sendResults(qresults);
+  	         if (_plugin!=null) _plugin.run(qresults);
+             }
 	     return recordCount;
 	}
 

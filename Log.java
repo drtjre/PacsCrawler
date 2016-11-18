@@ -1,5 +1,6 @@
 package jPacsCrawler;
 
+import java.nio.file.Path;
 
 /** Log
 *   Simple Logging Util
@@ -8,6 +9,8 @@ package jPacsCrawler;
 *   @author TJRE
 *   @date   Aug2016
 */
+
+import java.io.File;
 
 public class Log {
   private static boolean VERBOSE=true;
@@ -33,6 +36,7 @@ public class Log {
     System.err.println(combine("ERROR",msg,obj));
   }
   public static void error(String msg) {error(msg,null);}
+  public static void ERROR(String msg) {error(msg,null);}
 
   private static String combine(String tag, String msg, Object obj) {
     return tag+": "+msg+(obj!=null?"="+obj.toString():".");
@@ -47,7 +51,17 @@ public class Log {
     Log.out("Hellow World out");
     Log.error("Hellow World error", i);
     Log.error("Hellow World error");
+    Log.dump(new File(args[0]));
   }
 
+  public static void dump(File file) {
+    Log.out("Contents of file:"+file.getPath());
+    Log.out(JavaSystemCaller.sys("ls "+file.getPath()));
+    Log.out(JavaSystemCaller.sys("cat "+file.getPath()));
+  }
 
+  public static void ls(Path file) {
+    Log.out("Contents of dir:"+file.toString());
+    Log.out(JavaSystemCaller.sys("ls "+file.toString()));
+  }
 }
